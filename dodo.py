@@ -1,4 +1,7 @@
-def task(func):
+from typing import Callable
+
+
+def _task(func: Callable):
     func.create_doit_tasks = func
     return func
 
@@ -10,13 +13,27 @@ DOIT_CONFIG = {
 }
 
 
-@task
-def _list():
-    return dict(actions=["doit list"])
+def task(*cmds, file_dep=None, targets=None, task_dep=None, **kwargs):
+    return _task(
+        lambda: dict(
+            actions=cmds,
+            file_dep=file_dep or [],
+            targets=targets or [],
+            task_dep=task_dep or [],
+            **kwargs,
+        )
+    )
 
 
-def actions(*cmds):
-    return task(lambda: dict(actions=cmds))
+_list = task("doit list")
 
 
-requirements_dev = actions('pip-compile -o requirements-dev.txt requirements/dev.in')
+requirements_dev_compile = task(
+    "pip-compile -o requirements-dev.txt requirements/dev.in",
+    file_dep=["requirements/dev.in"],
+    targets=["requirements-dev.txt"],
+)
+
+requirements_dev_install = task(
+    "pip install -r requirements-dev.txt",
+)
