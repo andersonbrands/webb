@@ -18,3 +18,8 @@ jobs:
       
       - name: Lists installed packages
         run: python -m pip freeze
+        shell: bash
+      
+      - name: Run pre-commit
+        run: pre-commit run -a
+        shell: bash
