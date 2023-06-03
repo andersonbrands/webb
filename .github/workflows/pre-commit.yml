@@ -27,3 +27,7 @@ jobs:
       - name: Run pre-commit
         run: pre-commit run -a
         shell: bash
+
+      - name: Run tests
+        run: pytest
+        shell: bash
