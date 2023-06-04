@@ -28,12 +28,33 @@ def task(*cmds, file_dep=None, targets=None, task_dep=None, **kwargs):
 _list = task("doit list")
 
 
-requirements_dev_compile = task(
-    "pip-compile -o requirements-dev.txt requirements/dev.in",
-    file_dep=["requirements/dev.in"],
-    targets=["requirements-dev.txt"],
-)
+@_task
+def requirements_compile():
+    dev = dict(
+        in_files=["requirements/dev.in", "requirements/prod.in"],
+        out_file="requirements-dev.txt",
+        name="dev",
+    )
+    prod = dict(
+        in_files=["requirements/prod.in"],
+        out_file="requirements-prod.txt",
+        name="prod",
+    )
+    for env in [dev, prod]:
+        out = env["out_file"]
+        ins = " ".join(env["in_files"])
+        name = env["name"]
+
+        yield task(
+            f"pip-compile -o {out} {ins}",
+            name=name,
+        )()
+
 
 requirements_dev_install = task(
     "pip install -r requirements-dev.txt",
+)
+
+requirements_prod_install = task(
+    "pip install -r requirements-prod.txt",
 )
