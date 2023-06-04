@@ -12,5 +12,5 @@ async def test_greeting_with_no_name(client: TestClient):
 
 
 async def test_greeting_with_name(client: TestClient):
-    resp = await client.get("/greeting?name=wabble")
-    assert "Hello, wabble!" in await resp.text()
+    resp = await client.get("/greeting?name=python")
+    assert "Hello, python!" in await resp.text()
